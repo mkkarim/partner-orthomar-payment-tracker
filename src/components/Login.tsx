@@ -5,24 +5,21 @@ import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { HiLockClosed } from "react-icons/hi2";
 
-// 👇 Ton email autorisé
 const ALLOWED_EMAILS = [
   "karimmaitig98@gmail.com",
-  "asma.bouzid9862@gmail.com",   // ← remplace par son vrai email
+  "asma.bouzid9862@gmail.com",
 ];
 
 export default function Login() {
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
   const [loading,  setLoading]  = useState(false);
-  const [mode,     setMode]     = useState<"google" | "email">("google");
 
   const loginGoogle = async () => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
- if (!ALLOWED_EMAILS.includes(result.user.email ?? "")) {
-
+      if (!ALLOWED_EMAILS.includes(result.user.email ?? "")) {
         await signOut(auth);
         toast.error("Accès non autorisé");
         return;
@@ -39,9 +36,7 @@ export default function Login() {
 
   const loginEmail = async () => {
     if (!email || !password) { toast.error("Remplis tous les champs"); return; }
-    // Vérification email autorisé avant même d'essayer Firebase
     if (!ALLOWED_EMAILS.map(e => e.toLowerCase()).includes(email.trim().toLowerCase())) {
-
       toast.error("Accès non autorisé");
       return;
     }
@@ -82,66 +77,47 @@ export default function Login() {
 
         <div className="rounded-2xl border border-white/8 bg-white/4 backdrop-blur-sm p-6 space-y-3">
 
-          {/* Toggle mode */}
-          <div className="flex rounded-xl bg-white/4 p-1 gap-1 mb-4">
-            <button
-              onClick={() => setMode("google")}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-                mode === "google"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Google
-            </button>
-            <button
-              onClick={() => setMode("email")}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-                mode === "email"
-                  ? "bg-indigo-600 text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Email
-            </button>
+          {/* Email + password */}
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full bg-white/6 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && loginEmail()}
+          />
+          <input
+            type="password"
+            placeholder="Mot de passe"
+            className="w-full bg-white/6 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && loginEmail()}
+          />
+          <button
+            onClick={loginEmail}
+            disabled={loading || !email || !password}
+            className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium text-sm transition-all active:scale-95"
+          >
+            {loading ? "Connexion…" : "Se connecter"}
+          </button>
+
+          {/* Séparateur */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-white/8" />
+            <span className="text-xs text-slate-600">ou</span>
+            <div className="flex-1 h-px bg-white/8" />
           </div>
 
-          {mode === "google" ? (
-            <button
-              onClick={loginGoogle}
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-3 bg-white/6 hover:bg-white/10 border border-white/10 text-white py-3 rounded-xl text-sm font-medium transition-all active:scale-95 disabled:opacity-40"
-            >
-              <FcGoogle className="text-xl" />
-              {loading ? "Connexion…" : "Continuer avec Google"}
-            </button>
-          ) : (
-            <>
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full bg-white/6 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && loginEmail()}
-              />
-              <input
-                type="password"
-                placeholder="Mot de passe"
-                className="w-full bg-white/6 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500/60 transition-all"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && loginEmail()}
-              />
-              <button
-                onClick={loginEmail}
-                disabled={loading || !email || !password}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium text-sm transition-all active:scale-95"
-              >
-                {loading ? "Connexion…" : "Se connecter"}
-              </button>
-            </>
-          )}
+          {/* Google */}
+          <button
+            onClick={loginGoogle}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 bg-white/6 hover:bg-white/10 border border-white/10 text-white py-3 rounded-xl text-sm font-medium transition-all active:scale-95 disabled:opacity-40"
+          >
+            <FcGoogle className="text-xl" />
+            {loading ? "Connexion…" : "Continuer avec Google"}
+          </button>
         </div>
       </div>
     </div>
