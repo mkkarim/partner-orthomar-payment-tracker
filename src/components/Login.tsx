@@ -71,7 +71,7 @@ export default function Login() {
             <HiLockClosed className="text-white text-xl" />
           </div>
           <p className="text-xs font-medium text-slate-500 uppercase tracking-widest mb-1">Orthomar ERP</p>
-          <h1 className="text-2xl font-bold text-white">Payment Tracker</h1>
+          <h1 className="text-2xl font-bold text-white">Partner Payment Tracker</h1>
           <p className="text-sm text-slate-500 mt-1">Accès privé</p>
         </div>
 
