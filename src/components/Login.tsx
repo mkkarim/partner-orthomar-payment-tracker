@@ -6,7 +6,10 @@ import { FcGoogle } from "react-icons/fc";
 import { HiLockClosed } from "react-icons/hi2";
 
 // 👇 Ton email autorisé
-const ALLOWED_EMAIL = "karimmaitig98@gmail.com";
+const ALLOWED_EMAILS = [
+  "karimmaitig98@gmail.com",
+  "asma.bouzid9862@gmail.com",   // ← remplace par son vrai email
+];
 
 export default function Login() {
   const [email,    setEmail]    = useState("");
@@ -18,7 +21,8 @@ export default function Login() {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      if (result.user.email !== ALLOWED_EMAIL) {
+ if (!ALLOWED_EMAILS.includes(result.user.email ?? "")) {
+
         await signOut(auth);
         toast.error("Accès non autorisé");
         return;
@@ -36,7 +40,8 @@ export default function Login() {
   const loginEmail = async () => {
     if (!email || !password) { toast.error("Remplis tous les champs"); return; }
     // Vérification email autorisé avant même d'essayer Firebase
-    if (email.trim().toLowerCase() !== ALLOWED_EMAIL.toLowerCase()) {
+    if (!ALLOWED_EMAILS.map(e => e.toLowerCase()).includes(email.trim().toLowerCase())) {
+
       toast.error("Accès non autorisé");
       return;
     }
